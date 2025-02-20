@@ -12,13 +12,13 @@ test('login through homepage', async({page}) => {
 
     await homepage_account.goto()
 
-    await page.addLocatorHandler(page.getByRole('dialog'), async () => {
-        // if there is a dialog popup, click somewhere to close
-        await homepage_account.accountBtn.click()
+    // browsing from us modal
+    await page.addLocatorHandler(page.locator('.gFsXPt__container'), async () => {
+        await page.locator('button.gFsXPt__button').click()
     })
 
     await page.addLocatorHandler(page.locator(".dy-modal-container"), async () => {
-        await homepage_account.accountBtn.click()
+        await page.locator('div.dy-lb-close').click()
     })
 
     await homepage_account.login(mail, password)
