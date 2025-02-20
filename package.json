@@ -1,5 +1,5 @@
 {
-  "name": "playwright_sample",
+  "name": "playwright-pom-cicd-demo",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {},
@@ -9,6 +9,7 @@
   "description": "",
   "devDependencies": {
     "@playwright/test": "^1.50.1",
-    "@types/node": "^22.13.4"
+    "@types/node": "^22.13.4",
+    "dotenv": "^16.4.7"
   }
 }
