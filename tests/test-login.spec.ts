@@ -13,11 +13,11 @@ test('login through homepage', async({page}) => {
     await homepage_account.goto()
 
     // browsing from us modal
-    await page.addLocatorHandler(page.locator('.gFsXPt__container'), async () => {
-        await page.locator('button.gFsXPt__button').click()
+    await page.addLocatorHandler(page.locator('div.gFsXPt__container'), async () => {
+        await page.locator('div.gFsXPt__container').getByText('Stay on the Singapore site').click()
     })
 
-    await page.addLocatorHandler(page.locator(".dy-modal-container"), async () => {
+    await page.addLocatorHandler(page.locator('.dy-modal-container'), async () => {
         await page.locator('div.dy-lb-close').click()
     })
 
