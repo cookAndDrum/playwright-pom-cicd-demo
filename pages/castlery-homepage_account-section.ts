@@ -39,6 +39,10 @@ export class CastleryHomePage_AccountSection {
         await this.logoutBtn.click()
     }
 
+    async exitUSModal() {
+        this.page.locator('div.gFsXPt__container').getByText('Stay on the Singapore site').click()
+    }
+
     // assertion
     async hasValidAccountMenuList () {
         await this.accountBtn.hover()
