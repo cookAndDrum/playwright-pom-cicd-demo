@@ -40,7 +40,19 @@ export class CastleryHomePage_AccountSection {
     }
 
     async exitUSModal() {
-        this.page.locator('div.gFsXPt__container').getByText('Stay on the Singapore site').click()
+        // this.page.locator('div.gFsXPt__container').getByText('Stay on the Singapore site').click()
+        await this.page.addLocatorHandler(this.page.locator('div.gFsXPt__container'), async () => {
+            await this.page.locator('div.gFsXPt__container').getByText('Stay on the Singapore site').click()
+        })
+    }
+
+    async closeModal() {
+        await this.page.addLocatorHandler(this.page.locator('div.gFsXPt__container'), async () => {
+            await this.page.locator('div.gFsXPt__container').getByText('Stay on the Singapore site').click()
+        })
+        await this.page.addLocatorHandler(this.page.locator('.dy-modal-container'), async () => {
+            await this.page.locator('div.dy-lb-close').click()
+        })
     }
 
     // assertion
