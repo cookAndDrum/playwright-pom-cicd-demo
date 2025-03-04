@@ -1,28 +1,46 @@
 import {expect, type Locator, type Page} from '@playwright/test'
 
+interface Dictionary <T> {
+    [key: string | number | symbol ] : T,
+}
 
 export class CastleryHomePage_AccountSection {
     readonly page: Page
+    // menubar
     readonly accountBtn: Locator
-    readonly emailField: Locator
-    readonly passwordField: Locator
-    readonly loginBtn: Locator
     readonly logoutBtn: Locator
     readonly accountMenuList: Locator
     readonly accountMenuListItem: string[]
 
+    // login modal
+    readonly loginModal: Locator 
+    readonly loginModalCloseBtn: Locator
+    readonly emailField: Locator
+    readonly passwordField: Locator
+    readonly loginBtn: Locator
+    readonly errorMessage: Dictionary<Locator>
+    
+
     constructor(page : Page){
         this.page = page
         this.accountBtn = page.getByLabel('account')
-        this.emailField = page.getByRole('textbox', { name: 'Email', exact: true })
-        this.passwordField = page.getByRole('textbox', { name: 'Password' })
-        this.loginBtn = page.getByRole('button', { name: 'Log in line-right-arrow' })
         this.logoutBtn = page.getByRole('menuitem', { name: 'Log Out' })
         this.accountMenuList = page.getByRole('menu').getByRole('menuitem')
         this.accountMenuListItem = ['Account', 'Orders', 'Vouchers', 'Rewards', 'Address Book', 'Reviews', 'Log Out']
+
+        this.loginModal = page.locator('.YH3Oz4__container')
+        this.loginModalCloseBtn = this.loginModal.locator('button.btn.YH3Oz4__close')
+        this.emailField = page.getByRole('textbox', { name: 'Email', exact: true })
+        this.passwordField = page.getByRole('textbox', { name: 'Password' })
+        this.loginBtn = page.getByRole('button', { name: 'Log in line-right-arrow' })
+        this.errorMessage = {
+            "email": this.emailField.locator('+ label + [role="alert"]'),
+            "password": this.passwordField.locator('+ label + [role="alert"]'),
+            "login": this.page.getByRole('paragraph', {'name': 'Log in with Email'}).locator('+ .DY71YT'),
+        }
     }
 
-    async goto() {
+    async visit() {
         await this.page.goto('https://www.castlery.com/sg')
     }
 
@@ -39,14 +57,7 @@ export class CastleryHomePage_AccountSection {
         await this.logoutBtn.click()
     }
 
-    async exitUSModal() {
-        // this.page.locator('div.gFsXPt__container').getByText('Stay on the Singapore site').click()
-        await this.page.addLocatorHandler(this.page.locator('div.gFsXPt__container'), async () => {
-            await this.page.locator('div.gFsXPt__container').getByText('Stay on the Singapore site').click()
-        })
-    }
-
-    async closeModal() {
+    async closeIrrelevantModal() {
         await this.page.addLocatorHandler(this.page.locator('div.gFsXPt__container'), async () => {
             await this.page.locator('div.gFsXPt__container').getByText('Stay on the Singapore site').click()
         })
@@ -56,11 +67,32 @@ export class CastleryHomePage_AccountSection {
     }
 
     // assertion
+    async isLoginModalShown () {
+        await expect(this.loginModal).toBeAttached()
+        await expect(this.loginModal).toBeVisible()
+        await expect(this.loginModal).toBeInViewport()
+        
+        await expect(this.emailField).toBeVisible()
+        await expect(this.emailField).toBeEditable()
+        await expect(this.emailField).toBeEmpty()
+
+        await expect(this.passwordField).toBeVisible()
+        await expect(this.passwordField).toBeEditable()
+        await expect(this.passwordField).toBeEmpty()
+
+        await expect(this.loginBtn).toBeVisible()
+    }
+
+    async noLoginModal () {
+        await expect(this.loginModal).not.toBeVisible()
+        await expect(this.loginModal).not.toBeAttached()
+    }
+
     async hasValidAccountMenuList () {
         await this.accountBtn.hover()
         const menuitems = await this.accountMenuList.all()
         for (const item of menuitems)
-            await item.isVisible()
+            await expect(item).toBeVisible()
 
         await expect(this.accountMenuList).toHaveCount(this.accountMenuListItem.length)
         await expect(this.accountMenuList).toContainText(this.accountMenuListItem)
